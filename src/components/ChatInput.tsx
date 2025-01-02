@@ -3,6 +3,12 @@ import { RecordButton } from "./RecordButton";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Message } from "@/types/message";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -62,18 +68,25 @@ export const ChatInput = ({
           onStartRecording={onStartRecording}
           onStopRecording={onStopRecording}
         />
-        <button
-          onClick={handleImageClick}
-          className="p-3 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-        >
-          <Image className="w-5 h-5" />
-        </button>
-        <button
-          onClick={onStartCamera}
-          className="p-3 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-        >
-          <Camera className="w-5 h-5" />
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className="p-3 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+            >
+              <Image className="w-5 h-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-48">
+            <DropdownMenuItem onClick={handleImageClick}>
+              <Image className="w-4 h-4 mr-2" />
+              Upload Image
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onStartCamera}>
+              <Camera className="w-4 h-4 mr-2" />
+              Take Photo
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <input
           type="file"
           ref={fileInputRef}
@@ -81,21 +94,23 @@ export const ChatInput = ({
           accept="image/*"
           className="hidden"
         />
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSend()}
-          placeholder="Type a message..."
-          className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        <button
-          onClick={handleSend}
-          disabled={!input.trim()}
-          className="p-3 rounded-full bg-primary text-white disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
-        >
-          <Send className="w-5 h-5" />
-        </button>
+        <div className="flex-1 flex items-center space-x-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={(e) => e.key === "Enter" && handleSend()}
+            placeholder="Type a message..."
+            className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <button
+            onClick={handleSend}
+            disabled={!input.trim()}
+            className="p-3 rounded-full bg-primary text-white disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity shrink-0"
+          >
+            <Send className="w-5 h-5" />
+          </button>
+        </div>
       </div>
     </div>
   );
