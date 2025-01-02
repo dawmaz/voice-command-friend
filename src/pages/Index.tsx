@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { MessageBubble } from "@/components/MessageBubble";
 import { RecordButton } from "@/components/RecordButton";
 import { Message } from "@/types/message";
-import { Send } from "lucide-react";
+import { Send, Image } from "lucide-react";
 import { toast } from "sonner";
 
 const Index = () => {
@@ -10,6 +10,7 @@ const Index = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -54,6 +55,36 @@ const Index = () => {
     toast.success("Recording stopped");
   };
 
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    // Create a message with the image
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      content: `Sent an image: ${file.name}`,
+      role: "user",
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    toast.success('Image sent successfully');
+
+    // Reset the input
+    if (event.target) {
+      event.target.value = '';
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Header */}
@@ -82,6 +113,19 @@ const Index = () => {
           <RecordButton
             onStartRecording={handleStartRecording}
             onStopRecording={handleStopRecording}
+          />
+          <button
+            onClick={handleImageClick}
+            className="p-3 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+          >
+            <Image className="w-5 h-5" />
+          </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageUpload}
+            accept="image/*"
+            className="hidden"
           />
           <input
             type="text"
