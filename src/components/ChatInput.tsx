@@ -1,6 +1,6 @@
 import { Send, Image, Camera } from "lucide-react";
 import { RecordButton } from "./RecordButton";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Message } from "@/types/message";
 

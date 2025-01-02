@@ -3,6 +3,7 @@ import { MessageBubble } from "@/components/MessageBubble";
 import { Message } from "@/types/message";
 import { ChatInput } from "@/components/ChatInput";
 import { CameraModal } from "@/components/CameraModal";
+import { toast } from "sonner";
 
 const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
