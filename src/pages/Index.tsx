@@ -19,7 +19,7 @@ const Index = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = async (content: string) => {
     const userMessage: Message = {
       id: Date.now().toString(),
       content,
@@ -30,17 +30,24 @@ const Index = () => {
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
-    // Simulate assistant response
-    setTimeout(() => {
+    try {
+      // Simulate assistant response
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: "I'm your AI assistant. I'm here to help you with any questions or tasks you have.",
         role: "assistant",
         timestamp: new Date(),
       };
+      
+      // Add delay to simulate network request
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      toast.error("Failed to send message");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleStartRecording = () => {
@@ -53,12 +60,10 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header */}
       <div className="flex items-center justify-center p-4 border-b bg-white">
         <h1 className="text-xl font-semibold text-gray-800">AI Assistant</h1>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
