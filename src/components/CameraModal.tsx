@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { Message } from "@/types/message";
 
@@ -47,32 +47,29 @@ export const CameraModal = ({ onClose, onPhotoCapture }: CameraModalProps) => {
     onClose();
   };
 
-  // Start camera when component mounts
-  import("react").then(React => {
-    React.useEffect(() => {
-      const startCamera = async () => {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-          }
-        } catch (err) {
-          toast.error('Failed to access camera');
-          onClose();
+  useEffect(() => {
+    const startCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
         }
-      };
-      
-      startCamera();
-      
-      // Cleanup function
-      return () => {
-        const stream = videoRef.current?.srcObject as MediaStream | null;
-        if (stream) {
-          stream.getTracks().forEach(track => track.stop());
-        }
-      };
-    }, []);
-  });
+      } catch (err) {
+        toast.error('Failed to access camera');
+        onClose();
+      }
+    };
+    
+    startCamera();
+    
+    // Cleanup function
+    return () => {
+      const stream = videoRef.current?.srcObject as MediaStream | null;
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [onClose]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
