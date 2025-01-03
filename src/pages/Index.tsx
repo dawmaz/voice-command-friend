@@ -4,6 +4,9 @@ import { Message } from "@/types/message";
 import { ChatInput } from "@/components/ChatInput";
 import { CameraModal } from "@/components/CameraModal";
 import { toast } from "sonner";
+import { NotificationsDropdown } from "@/components/NotificationsDropdown";
+
+const TOAST_DURATION = 5000; // 5 seconds default duration
 
 const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -43,25 +46,39 @@ const Index = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setMessages((prev) => [...prev, assistantMessage]);
+      toast.success("Message sent successfully", {
+        duration: TOAST_DURATION,
+        position: "top-right"
+      });
     } catch (error) {
-      toast.error("Failed to send message");
+      toast.error("Failed to send message", {
+        duration: TOAST_DURATION,
+        position: "top-right"
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleStartRecording = () => {
-    toast.info("Started recording...");
+    toast.info("Started recording...", {
+      duration: TOAST_DURATION,
+      position: "top-right"
+    });
   };
 
   const handleStopRecording = () => {
-    toast.success("Recording stopped");
+    toast.success("Recording stopped", {
+      duration: TOAST_DURATION,
+      position: "top-right"
+    });
   };
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      <div className="flex items-center justify-center p-4 border-b bg-white">
+      <div className="flex items-center justify-between p-4 border-b bg-white">
         <h1 className="text-xl font-semibold text-gray-800">AI Assistant</h1>
+        <NotificationsDropdown />
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
