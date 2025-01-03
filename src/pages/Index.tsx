@@ -41,6 +41,10 @@ const Index = () => {
     setNotifications(prev => [newNotification, ...prev]);
   };
 
+  const handleAcknowledgeNotification = (id: string) => {
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
+  };
+
   const handleSendMessage = async (content: string) => {
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -101,7 +105,10 @@ const Index = () => {
     <div className="flex flex-col h-screen bg-gray-50">
       <div className="flex items-center justify-between p-4 border-b bg-white">
         <h1 className="text-xl font-semibold text-gray-800">AI Assistant</h1>
-        <NotificationsDropdown notifications={notifications} />
+        <NotificationsDropdown 
+          notifications={notifications} 
+          onAcknowledge={handleAcknowledgeNotification}
+        />
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">

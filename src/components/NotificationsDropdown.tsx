@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Notification {
   id: string;
@@ -15,9 +16,14 @@ interface Notification {
 
 interface NotificationsDropdownProps {
   notifications: Notification[];
+  onAcknowledge?: (id: string) => void;
 }
 
-export function NotificationsDropdown({ notifications }: NotificationsDropdownProps) {
+export function NotificationsDropdown({ notifications, onAcknowledge }: NotificationsDropdownProps) {
+  const handleNotificationClick = (id: string) => {
+    onAcknowledge?.(id);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="relative">
@@ -34,19 +40,25 @@ export function NotificationsDropdown({ notifications }: NotificationsDropdownPr
             No notifications
           </DropdownMenuItem>
         ) : (
-          notifications.map((notification) => (
-            <DropdownMenuItem key={notification.id} className="flex flex-col items-start gap-1 py-3">
-              <div className="font-medium">{notification.title}</div>
-              {notification.description && (
-                <div className="text-sm text-muted-foreground">
-                  {notification.description}
+          <ScrollArea className="h-[300px]">
+            {notifications.map((notification) => (
+              <DropdownMenuItem 
+                key={notification.id} 
+                className="flex flex-col items-start gap-1 py-3 cursor-pointer"
+                onClick={() => handleNotificationClick(notification.id)}
+              >
+                <div className="font-medium">{notification.title}</div>
+                {notification.description && (
+                  <div className="text-sm text-muted-foreground">
+                    {notification.description}
+                  </div>
+                )}
+                <div className="text-xs text-muted-foreground">
+                  {notification.timestamp.toLocaleTimeString()}
                 </div>
-              )}
-              <div className="text-xs text-muted-foreground">
-                {notification.timestamp.toLocaleTimeString()}
-              </div>
-            </DropdownMenuItem>
-          ))
+              </DropdownMenuItem>
+            ))}
+          </ScrollArea>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
