@@ -6,12 +6,21 @@ import { CameraModal } from "@/components/CameraModal";
 import { toast } from "sonner";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 
-const TOAST_DURATION = 5000; // 5 seconds default duration
+const TOAST_DURATION = 1000; // 1 second duration for toasts
+const DEFAULT_NOTIFICATIONS: Notification[] = [];
+
+interface Notification {
+  id: string;
+  title: string;
+  description?: string;
+  timestamp: Date;
+}
 
 const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>(DEFAULT_NOTIFICATIONS);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -21,6 +30,16 @@ const Index = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const addNotification = (title: string, description?: string) => {
+    const newNotification: Notification = {
+      id: Date.now().toString(),
+      title,
+      description,
+      timestamp: new Date(),
+    };
+    setNotifications(prev => [newNotification, ...prev]);
+  };
 
   const handleSendMessage = async (content: string) => {
     const userMessage: Message = {
@@ -50,11 +69,13 @@ const Index = () => {
         duration: TOAST_DURATION,
         position: "top-right"
       });
+      addNotification("Message Sent", "Your message was delivered successfully");
     } catch (error) {
       toast.error("Failed to send message", {
         duration: TOAST_DURATION,
         position: "top-right"
       });
+      addNotification("Error", "Failed to send message");
     } finally {
       setIsLoading(false);
     }
@@ -65,6 +86,7 @@ const Index = () => {
       duration: TOAST_DURATION,
       position: "top-right"
     });
+    addNotification("Recording Started", "Voice recording has begun");
   };
 
   const handleStopRecording = () => {
@@ -72,13 +94,14 @@ const Index = () => {
       duration: TOAST_DURATION,
       position: "top-right"
     });
+    addNotification("Recording Stopped", "Voice recording has been completed");
   };
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <div className="flex items-center justify-between p-4 border-b bg-white">
         <h1 className="text-xl font-semibold text-gray-800">AI Assistant</h1>
-        <NotificationsDropdown />
+        <NotificationsDropdown notifications={notifications} />
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">

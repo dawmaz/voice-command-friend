@@ -5,7 +5,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
 
 interface Notification {
   id: string;
@@ -14,9 +13,11 @@ interface Notification {
   timestamp: Date;
 }
 
-export function NotificationsDropdown() {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+interface NotificationsDropdownProps {
+  notifications: Notification[];
+}
 
+export function NotificationsDropdown({ notifications }: NotificationsDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="relative">
