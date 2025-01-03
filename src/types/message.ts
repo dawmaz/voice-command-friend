@@ -5,4 +5,6 @@ export interface Message {
   content: string;
   role: MessageRole;
   timestamp: Date;
+  mediaUrl?: string;
+  mediaType?: "image" | "audio";
 }

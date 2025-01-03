@@ -27,6 +27,8 @@ export const ChatInput = ({
 }: ChatInputProps) => {
   const [input, setInput] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -47,17 +49,63 @@ export const ChatInput = ({
       return;
     }
 
+    const imageUrl = URL.createObjectURL(file);
     const message: Message = {
       id: Date.now().toString(),
       content: `Sent an image: ${file.name}`,
       role: "user",
       timestamp: new Date(),
+      mediaUrl: imageUrl,
+      mediaType: "image"
     };
 
     onImageUpload(message);
 
     if (event.target) {
       event.target.value = '';
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(chunksRef.current, { type: 'audio/wav' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const message: Message = {
+          id: Date.now().toString(),
+          content: "Voice message",
+          role: "user",
+          timestamp: new Date(),
+          mediaUrl: audioUrl,
+          mediaType: "audio"
+        };
+        onImageUpload(message); // We'll reuse the image upload handler for audio
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      onStartRecording();
+    } catch (error) {
+      toast.error('Failed to start recording');
+      console.error('Recording error:', error);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+      onStopRecording();
     }
   };
 

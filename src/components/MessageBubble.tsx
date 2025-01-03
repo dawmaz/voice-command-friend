@@ -24,6 +24,22 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
         )}
       >
         <p className="text-sm">{message.content}</p>
+        {message.mediaType === "image" && message.mediaUrl && (
+          <img 
+            src={message.mediaUrl} 
+            alt="Uploaded content" 
+            className="mt-2 rounded-lg max-w-full h-auto"
+          />
+        )}
+        {message.mediaType === "audio" && message.mediaUrl && (
+          <audio 
+            controls 
+            className="mt-2 w-full"
+          >
+            <source src={message.mediaUrl} type="audio/wav" />
+            Your browser does not support the audio element.
+          </audio>
+        )}
       </div>
     </div>
   );

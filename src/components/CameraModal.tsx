@@ -25,11 +25,14 @@ export const CameraModal = ({ onClose, onPhotoCapture }: CameraModalProps) => {
       ctx.drawImage(videoRef.current, 0, 0);
       canvas.toBlob((blob) => {
         if (blob) {
+          const imageUrl = URL.createObjectURL(blob);
           const message: Message = {
             id: Date.now().toString(),
             content: `Captured photo from camera`,
             role: "user",
             timestamp: new Date(),
+            mediaUrl: imageUrl,
+            mediaType: "image"
           };
           onPhotoCapture(message);
           toast.success('Photo captured successfully');
