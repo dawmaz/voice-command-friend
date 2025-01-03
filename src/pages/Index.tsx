@@ -45,6 +45,14 @@ const Index = () => {
     setNotifications(prev => prev.filter(notification => notification.id !== id));
   };
 
+  const handleClearAllNotifications = () => {
+    setNotifications([]);
+    toast.success("All notifications cleared", {
+      duration: TOAST_DURATION,
+      position: "top-right"
+    });
+  };
+
   const handleSendMessage = async (content: string) => {
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -108,6 +116,7 @@ const Index = () => {
         <NotificationsDropdown 
           notifications={notifications} 
           onAcknowledge={handleAcknowledgeNotification}
+          onClearAll={handleClearAllNotifications}
         />
       </div>
 

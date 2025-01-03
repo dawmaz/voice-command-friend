@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 
 interface Notification {
   id: string;
@@ -17,9 +18,14 @@ interface Notification {
 interface NotificationsDropdownProps {
   notifications: Notification[];
   onAcknowledge?: (id: string) => void;
+  onClearAll?: () => void;
 }
 
-export function NotificationsDropdown({ notifications, onAcknowledge }: NotificationsDropdownProps) {
+export function NotificationsDropdown({ 
+  notifications, 
+  onAcknowledge,
+  onClearAll 
+}: NotificationsDropdownProps) {
   const handleNotificationClick = (id: string) => {
     onAcknowledge?.(id);
   };
@@ -40,25 +46,36 @@ export function NotificationsDropdown({ notifications, onAcknowledge }: Notifica
             No notifications
           </DropdownMenuItem>
         ) : (
-          <ScrollArea className="h-[300px]">
-            {notifications.map((notification) => (
-              <DropdownMenuItem 
-                key={notification.id} 
-                className="flex flex-col items-start gap-1 py-3 cursor-pointer"
-                onClick={() => handleNotificationClick(notification.id)}
-              >
-                <div className="font-medium">{notification.title}</div>
-                {notification.description && (
-                  <div className="text-sm text-muted-foreground">
-                    {notification.description}
+          <>
+            <ScrollArea className="h-[300px]">
+              {notifications.map((notification) => (
+                <DropdownMenuItem 
+                  key={notification.id} 
+                  className="flex flex-col items-start gap-1 py-3 cursor-pointer"
+                  onClick={() => handleNotificationClick(notification.id)}
+                >
+                  <div className="font-medium">{notification.title}</div>
+                  {notification.description && (
+                    <div className="text-sm text-muted-foreground">
+                      {notification.description}
+                    </div>
+                  )}
+                  <div className="text-xs text-muted-foreground">
+                    {notification.timestamp.toLocaleTimeString()}
                   </div>
-                )}
-                <div className="text-xs text-muted-foreground">
-                  {notification.timestamp.toLocaleTimeString()}
-                </div>
-              </DropdownMenuItem>
-            ))}
-          </ScrollArea>
+                </DropdownMenuItem>
+              ))}
+            </ScrollArea>
+            <div className="p-2 border-t">
+              <Button 
+                variant="destructive" 
+                className="w-full" 
+                onClick={() => onClearAll?.()}
+              >
+                Clear All
+              </Button>
+            </div>
+          </>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
