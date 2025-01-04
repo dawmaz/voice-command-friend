@@ -10,7 +10,7 @@ interface RecordButtonProps {
 export const RecordButton = ({ onStartRecording, onStopRecording }: RecordButtonProps) => {
   const [isRecording, setIsRecording] = useState(false);
 
-  const handlePress = () => {
+  const handlePress = async () => {
     if (isRecording) {
       setIsRecording(false);
       onStopRecording();

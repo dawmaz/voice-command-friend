@@ -90,7 +90,7 @@ export const ChatInput = ({
           mediaUrl: audioUrl,
           mediaType: "audio"
         };
-        onImageUpload(message); // We'll reuse the image upload handler for audio
+        onImageUpload(message);
         stream.getTracks().forEach(track => track.stop());
       };
 
@@ -113,8 +113,8 @@ export const ChatInput = ({
     <div className="border-t bg-white p-4">
       <div className="flex items-center space-x-2 max-w-4xl mx-auto">
         <RecordButton
-          onStartRecording={onStartRecording}
-          onStopRecording={onStopRecording}
+          onStartRecording={startRecording}
+          onStopRecording={stopRecording}
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
